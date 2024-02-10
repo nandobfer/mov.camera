@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "mov.camera",
-    "slug": "mov.camera",
+    "slug": "movcamera",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,16 +15,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nandoburgos.mov.camera"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.nandoburgos.mov.camera"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "scheme": "com.nandoburgos.mov.camera",
+    "extra": {
+      "eas": {
+        "projectId": "a70fcb9d-d984-4243-9fa9-c367dbac0cf7"
+      }
     }
   }
 }

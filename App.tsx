@@ -4,12 +4,14 @@ import { useEffect, useState } from "react"
 import * as SplashScreen from "expo-splash-screen"
 import { Camera } from "expo-camera"
 import { CameraComponent } from "./src/Screens/CameraComponent"
+import { Authentication } from "./src/Screens/Authentication"
 
 SplashScreen.preventAutoHideAsync()
 
 const App = () => {
     const [cameraPermission, requestCameraPermission] = Camera.useCameraPermissions()
     const [audioPermission, requestAudioPermission] = Camera.useMicrophonePermissions()
+    const [token, setToken] = useState("")
 
     useEffect(() => {
         if (!cameraPermission?.granted) {
@@ -28,7 +30,7 @@ const App = () => {
     return cameraPermission?.granted && audioPermission?.granted ? (
         <View style={{ backgroundColor: "black", flex: 1 }}>
             <StatusBar style="auto" hidden />
-            <CameraComponent />
+            {token ? <CameraComponent /> : <Authentication setToken={setToken} />}
         </View>
     ) : (
         <View>

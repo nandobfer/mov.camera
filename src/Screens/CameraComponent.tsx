@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Dimensions, Platform, Text, TouchableOpacity, View } from "react-native"
-import { Camera, CameraType, VideoStabilization } from "expo-camera"
+import { Camera, CameraCapturedPicture, CameraType, VideoStabilization } from "expo-camera"
 import { FontAwesome } from "@expo/vector-icons"
 import { PictureDisplayer } from "./PictureDisplayer"
 import { MaterialIcons } from "@expo/vector-icons"
@@ -16,9 +16,9 @@ export const CameraComponent: React.FC<CameraComponentProps> = ({}) => {
     const [cameraKey, setCameraKey] = useState(1)
     const [cameraType, setCameraType] = useState<"photo" | "video">("photo")
     const [ready, setReady] = useState(false)
-    const [picUri, setPicUri] = useState("")
     const [type, setType] = useState<CameraType>(CameraType.back)
     const [ratio, setRatio] = useState<"16:9" | "4:3" | "1:1">("16:9")
+    const [picture, setPicture] = useState<CameraCapturedPicture | null>(null)
 
     const height = Math.round((width * Number(ratio.split(":")[0])) / Number(ratio.split(":")[1]))
 
@@ -41,7 +41,7 @@ export const CameraComponent: React.FC<CameraComponentProps> = ({}) => {
 
         cameraRef.current?.takePictureAsync({ exif: true, skipProcessing: true }).then((picture) => {
             console.log(picture)
-            setPicUri(picture.uri)
+            setPicture(picture)
         })
     }
 
@@ -103,7 +103,7 @@ export const CameraComponent: React.FC<CameraComponentProps> = ({}) => {
                     <FontAwesome name="video-camera" size={24} color="red" />
                 </TouchableOpacity>
             </View>
-            {picUri && <PictureDisplayer uri={picUri} reset={() => setPicUri("")} ratio={ratio} />}
+            {picture && <PictureDisplayer picture={picture} reset={() => setPicture(null)} ratio={ratio} />}
         </>
     )
 }
