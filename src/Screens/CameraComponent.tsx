@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { Dimensions, Platform, Text, TouchableOpacity, View } from "react-native"
+import { Alert, Dimensions, Platform, Text, TouchableOpacity, View } from "react-native"
 import { Camera, CameraCapturedPicture, CameraType, VideoStabilization } from "expo-camera"
 import { FontAwesome } from "@expo/vector-icons"
 import { PictureDisplayer } from "./PictureDisplayer"
@@ -99,7 +99,7 @@ export const CameraComponent: React.FC<CameraComponentProps> = ({}) => {
                     }}
                     onPress={cameraType == "photo" ? handleShoot : recording ? handleStop : handlePlay}
                 ></TouchableOpacity>
-                <TouchableOpacity onPress={() => setCameraType("video")} style={{ opacity: cameraType == "photo" ? 0.15 : 1 }}>
+                <TouchableOpacity onPress={() => Alert.alert("não fiz ainda")} style={{ opacity: cameraType == "photo" ? 0.15 : 1 }}>
                     <FontAwesome name="video-camera" size={24} color="red" />
                 </TouchableOpacity>
             </View>
