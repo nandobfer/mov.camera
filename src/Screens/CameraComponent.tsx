@@ -39,7 +39,7 @@ export const CameraComponent: React.FC<CameraComponentProps> = ({}) => {
     const handleShoot = () => {
         if (!ready) return
 
-        cameraRef.current?.takePictureAsync({ exif: true, skipProcessing: true }).then((picture) => {
+        cameraRef.current?.takePictureAsync({ exif: true, skipProcessing: true, base64: true }).then((picture) => {
             console.log(picture)
             setPicture(picture)
         })

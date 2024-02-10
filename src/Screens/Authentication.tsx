@@ -17,6 +17,7 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     const [request, response, promptAsync] = Google.useAuthRequest({
         clientId: google_secret.installed.client_id,
         selectAccount: true,
+        scopes: ["https://www.googleapis.com/auth/drive"],
     })
 
     const storeTokens = async (accessToken: string, refreshToken?: string, expiresIn?: number) => {
@@ -32,20 +33,24 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     }
 
     const refreshToken = async () => {
-        const tokenResult = await AuthSession.refreshAsync(
-            {
-                clientId: google_secret.installed.client_id,
-                refreshToken: (await AsyncStorage.getItem("refreshToken")) as string,
-            },
-            {
-                tokenEndpoint: "www.googleapis.com/oauth2/v4/token",
-            }
-        )
+        try {
+            const tokenResult = await AuthSession.refreshAsync(
+                {
+                    clientId: google_secret.installed.client_id,
+                    refreshToken: (await AsyncStorage.getItem("refreshToken")) as string,
+                },
+                {
+                    tokenEndpoint: "https://googleapis.com/oauth2/v4/token",
+                }
+            )
 
-        console.log(JSON.stringify({ tokenResult }, null, 4))
+            console.log(JSON.stringify({ tokenResult }, null, 4))
 
-        storeTokens(tokenResult.accessToken, tokenResult.refreshToken, tokenResult.expiresIn)
-        return tokenResult.accessToken
+            storeTokens(tokenResult.accessToken, tokenResult.refreshToken, tokenResult.expiresIn)
+            return tokenResult.accessToken
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     async function getToken() {
@@ -122,10 +127,11 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     }, [])
 
     return (
-        <View style={{ alignItems: "center", flex: 1, justifyContent: "center" }}>
+        <View style={{ alignItems: "center", flex: 1, justifyContent: "center", gap: 25 }}>
             <Text style={{ color: "red" }}>necessário autenticar com google</Text>
             <Button
-                title="sign in with google"
+                title="entrar"
+                color={"red"}
                 onPress={() => {
                     promptAsync()
                 }}
