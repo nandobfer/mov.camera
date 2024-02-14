@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { Button, Text, View } from "react-native"
+import { Button, Platform, Text, View } from "react-native"
 import * as AuthSession from "expo-auth-session"
 import * as WebBrowser from "expo-web-browser"
 import * as Google from "expo-auth-session/providers/google"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import google_secret from "../google_client_secret_android.json"
+import google_secret_android from "../google_client_secret_android.json"
+import google_secret_ios from "../google_client_secret_ios.json"
 
 interface AuthenticationProps {
     setToken: React.Dispatch<React.SetStateAction<string>>
@@ -15,7 +16,7 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     const [userInfo, setUserInfo] = useState<any>(null)
 
     const [request, response, promptAsync] = Google.useAuthRequest({
-        clientId: google_secret.installed.client_id,
+        clientId: Platform.OS == "ios" ? google_secret_ios.client_id : google_secret_android.installed.client_id,
         selectAccount: true,
         scopes: ["https://www.googleapis.com/auth/drive"],
     })
@@ -36,7 +37,7 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
         try {
             const tokenResult = await AuthSession.refreshAsync(
                 {
-                    clientId: google_secret.installed.client_id,
+                    clientId: google_secret_android.installed.client_id,
                     refreshToken: (await AsyncStorage.getItem("refreshToken")) as string,
                 },
                 {
