@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Button, Platform, Text, View } from "react-native"
 import * as AuthSession from "expo-auth-session"
 import * as WebBrowser from "expo-web-browser"
@@ -6,6 +6,7 @@ import * as Google from "expo-auth-session/providers/google"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import google_secret_android from "../google_client_secret_android.json"
 import google_secret_ios from "../google_client_secret_ios.json"
+import UserContext from "../contexts/userContext"
 
 interface AuthenticationProps {
     setToken: React.Dispatch<React.SetStateAction<string>>
@@ -13,7 +14,7 @@ interface AuthenticationProps {
 
 WebBrowser.maybeCompleteAuthSession()
 export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
-    const [userInfo, setUserInfo] = useState<any>(null)
+    const { user, setUser } = useContext(UserContext)
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         clientId: Platform.OS == "ios" ? google_secret_ios.client_id : google_secret_android.installed.client_id,
@@ -34,6 +35,7 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     }
 
     const refreshToken = async () => {
+        console.log("refreshing?")
         try {
             const tokenResult = await AuthSession.refreshAsync(
                 {
@@ -56,13 +58,14 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
 
     async function getToken() {
         const expirationTime = await AsyncStorage.getItem("expirationTime")
+        console.log({ expirationTime, now: new Date().getTime(), expired: new Date().getTime() > Number(expirationTime) })
         if (expirationTime && new Date().getTime() > parseInt(expirationTime)) {
-            console.log({ expirationTime, now: new Date().getTime(), expired: new Date().getTime() > parseInt(expirationTime) })
             // Token is expired or not found, refresh it
             console.log("Token is expired. Refreshing...")
             return await refreshToken()
         } else {
             // Token is still valid
+            console.log("token still valid")
             return await AsyncStorage.getItem("accessToken")
         }
     }
@@ -76,9 +79,9 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
                 headers: { Authorization: `Bearer ${token}` },
             })
             const user = await response.json()
+            console.log(user)
             //store user information  in Asyncstorage
-            await AsyncStorage.setItem("user", JSON.stringify(user))
-            setUserInfo(user)
+            setUser(user)
         } catch (error) {
             console.error("Failed to fetch user data:", response)
         }
@@ -108,7 +111,7 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
         if (!token) {
             console.log("No token found")
             // Token not found, user needs to log in
-            setUserInfo(null)
+            setUser(undefined)
             return
         }
 

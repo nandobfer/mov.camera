@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { ActivityIndicator, Alert, Dimensions, ImageBackground, TouchableOpacity, View } from "react-native"
 import { FontAwesome } from "@expo/vector-icons"
 import { CameraCapturedPicture } from "expo-camera"
 import { uploadToDrive } from "../drive/upload"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import UserContext from "../contexts/userContext"
 
 interface PictureDisplayerProps {
     picture: CameraCapturedPicture
@@ -12,6 +13,7 @@ interface PictureDisplayerProps {
 }
 
 export const PictureDisplayer: React.FC<PictureDisplayerProps> = ({ picture, reset, ratio }) => {
+    const { user } = useContext(UserContext)
     const { width } = Dimensions.get("screen")
     const height = Math.round((width * Number(ratio.split(":")[0])) / Number(ratio.split(":")[1]))
 
@@ -21,11 +23,12 @@ export const PictureDisplayer: React.FC<PictureDisplayerProps> = ({ picture, res
         setUploading(true)
         console.log("pressed upload")
         const expirationTime = await AsyncStorage.getItem("expirationTime")
-        const user = JSON.parse((await AsyncStorage.getItem("user")) || "")
 
         if (!user || (expirationTime && new Date().getTime() > parseInt(expirationTime))) {
             Alert.alert("usuário expirou, fecha e abre de novo")
+            return
         }
+
         console.log(user)
         const token = await AsyncStorage.getItem("accessToken")
 

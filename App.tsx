@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen"
 import { Camera } from "expo-camera"
 import { CameraComponent } from "./src/Screens/CameraComponent"
 import { Authentication } from "./src/Screens/Authentication"
+import { UserProvider } from "./src/contexts/userContext"
 
 SplashScreen.preventAutoHideAsync()
 
@@ -30,7 +31,7 @@ const App = () => {
     return cameraPermission?.granted && audioPermission?.granted ? (
         <View style={{ backgroundColor: "black", flex: 1 }}>
             <StatusBar style="auto" hidden />
-            {token ? <CameraComponent /> : <Authentication setToken={setToken} />}
+            <UserProvider>{token ? <CameraComponent /> : <Authentication setToken={setToken} />}</UserProvider>
         </View>
     ) : (
         <View>
