@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Button, Platform, Text, View } from "react-native"
+import { ActivityIndicator, Button, Platform, Text, View } from "react-native"
 import * as AuthSession from "expo-auth-session"
-import * as WebBrowser from "expo-web-browser"
 import * as Google from "expo-auth-session/providers/google"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import google_secret_android from "../google_client_secret_android.json"
@@ -12,7 +11,6 @@ interface AuthenticationProps {
     setToken: React.Dispatch<React.SetStateAction<string>>
 }
 
-WebBrowser.maybeCompleteAuthSession()
 export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     const { user, setUser } = useContext(UserContext)
 
@@ -66,7 +64,8 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
         } else {
             // Token is still valid
             console.log("token still valid")
-            return await AsyncStorage.getItem("accessToken")
+            // return await AsyncStorage.getItem("accessToken")
+            return false
         }
     }
 
@@ -133,13 +132,17 @@ export const Authentication: React.FC<AuthenticationProps> = ({ setToken }) => {
     return (
         <View style={{ alignItems: "center", flex: 1, justifyContent: "center", gap: 25 }}>
             <Text style={{ color: "red" }}>necessário autenticar com google</Text>
-            <Button
-                title="entrar"
-                color={"red"}
-                onPress={() => {
-                    promptAsync()
-                }}
-            />
+            {user ? (
+                <ActivityIndicator size={36} color={"red"} />
+            ) : (
+                <Button
+                    title="entrar"
+                    color={"red"}
+                    onPress={() => {
+                        promptAsync()
+                    }}
+                />
+            )}
         </View>
     )
 }
