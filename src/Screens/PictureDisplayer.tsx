@@ -32,7 +32,7 @@ export const PictureDisplayer: React.FC<PictureDisplayerProps> = ({ picture, res
         console.log(user)
         const token = await AsyncStorage.getItem("accessToken")
 
-        const filename = `${user.given_name}.${new Date().toLocaleString("pt-br").replace(" ", ".")}`
+        const filename = `${user.given_name}_${new Date().toLocaleString("pt-br").replaceAll(" ", "_").replaceAll("/", ".").replaceAll(":", ".")}.jpg`
         const uploaded = await uploadToDrive(token!, picture, filename)
         setUploading(false)
 
