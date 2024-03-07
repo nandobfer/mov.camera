@@ -19,8 +19,9 @@
       },
       "android": {
           "adaptiveIcon": {
-              "foregroundImage": "./assets/adaptive-icon.png",
-              "backgroundColor": "#ffffff"
+              "foregroundImage": "./assets/icon.png",
+              "monochromeImage": "./assets/adaptive-icon.png",
+              "backgroundColor": "#606060"
           },
           "package": "com.nandoburgos.mov.camera"
       },
